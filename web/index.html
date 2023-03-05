@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <style>
+        .btnthing {
+            width: 100%;
+            height: 500px;
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="rotate.png" id="rotImg" height="200">
+    
+    <script defer>
+        const gyro = new Gyroscope({ frequency: 60 });
+        const socket = io(`wss://${window.location.hostname}:3001`);
+        const rotImg = document.getElementById("rotImg")
+
+        let rotPreview = 0
+
+        gyro.addEventListener("reading", (e) => {
+            socket.emit("gyro_data", { x: gyro.x, y: gyro.y, z: gyro.z })
+            rotPreview -= gyro.z
+
+            rotImg.style.transform = `rotate(${rotPreview}deg)`
+        });
+
+        gyro.start()
+    </script>
+</body>
+
+</html>
